@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class User extends Model
+use Illuminate\Foundation\Auth\User as Authenticable;
+use Illuminate\Notifications\Notifiable;
+class User extends Authenticable
 {
     use HasFactory;
+    use Notifiable;
     
     // relacionamento de 1 para 1 com a tabela User_detail
     public function detail()
