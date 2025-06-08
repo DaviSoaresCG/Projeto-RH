@@ -20,7 +20,7 @@
                         <div class="mb-3">
                             <label for="email">Email</label>
                             <input type="email" class="form-control" id="email" name="email">
-                            @foreach ($erros->get('email') as $message)
+                            @foreach ($errors->get('email') as $message)
                                 <div class="text-danger">{{ $message }}</div>
                             @endforeach
                         </div>
@@ -28,7 +28,7 @@
                         <div class="mb-3">
                             <label for="password">Senha</label>
                             <input type="password" class="form-control" id="password" name="password">
-                            @foreach ($erros->get('password') as $message)
+                            @foreach ($errors->get('password') as $message)
                                 <div class="text-danger">{{ $message }}</div>
                             @endforeach
                         </div>

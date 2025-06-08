@@ -38,8 +38,8 @@
                     @else
 
                         <div class="text-center mb-5">
-                            <p>Se está registado nesta plataforma, irá receber um email com um link para recuperar a sua senha.</p>
-                            <p class="mb-5">Por favor verifique a sua caixa de correio.</p>
+                            <p>Enviamos um link para resetar a senha.</p>
+                            <p class="mb-5">Por favor verifique a sua caixa de correio do email que digitou.</p>
                             <a href="{{ route('login') }}" class="btn btn-primary px-4">Voltar ao login</a>
                         </div>
 
