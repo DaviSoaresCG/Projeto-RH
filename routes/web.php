@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use App\Models\User;
 use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\Mail;
@@ -28,5 +29,10 @@ Route::get('/admin', function(){
 Route::middleware('auth')->group(function(){
     Route::redirect('/', 'home');
     Route::view('/home', 'home')->name('home');
+
+    // user profile
+    Route::get('/user/profile', [ProfileController::class, 'index'])->name('user.profile');
 });
+
+
 
