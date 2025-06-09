@@ -39,4 +39,42 @@ class DepartmentController extends Controller
 
         return redirect()->route('departments');
     }
+
+    public function editDepartment($id)
+    {
+        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
+
+        if(intval($id) == 1){
+            return redirect()->rout('departments');
+        }
+
+        $department = Department::findOrFail($id);
+        return view('department.edit-department', compact('department'));
+    }
+
+    public function updateDepartment(Reqeust $request)
+    {
+        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
+
+        $id = $request->id;
+
+        // validate
+        $request->validate([
+            'id' => 'required',
+            'name' => 'required|string|min:3|max:100|unique:departments,name,' . $id
+        ]);
+
+        // check if ID == 1
+        if($id == 1){
+            return redirect()->view('departments');
+        }
+
+        $department = Department::findOrFail($id);
+
+        $department->update([
+            'name' => $request->name
+        ]);
+
+        return redirect()->route('departments');
+    }
 }
