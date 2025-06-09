@@ -52,7 +52,7 @@ class DepartmentController extends Controller
         return view('department.edit-department', compact('department'));
     }
 
-    public function updateDepartment(Reqeust $request)
+    public function updateDepartment(Request $request)
     {
         Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
