@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RhUserController;
 use App\Models\Department;
 use App\Models\User;
 use Illuminate\Mail\Message;
@@ -40,15 +41,21 @@ Route::middleware('auth')->group(function(){
     // departments routes
     Route::get('/departments', [DepartmentController::class, 'index'])->name('departments');
 
+    // create departments
     Route::get('/departments/new-department', [DepartmentController::class, 'newDepartment'])->name('departments.new-department');
     Route::post('/departments/create-department', [DepartmentController::class, 'createDepartment'])->name('departments.new-department');
 
+    // edit departments
     Route::get('/departments/edit-department/{id}', [DepartmentController::class, 'editDepartment'])->name('departments.edit-department');
     Route::get('/departments/update-department', [DepartmentController::class, 'updateDepartment'])->name('departments.update-department');
 
-    // delete
+    // delete departments
     Route::get('/departments/delete-department/{id}', [DepartmentController::class, 'deleteDepartment'])->name('departments.delete-department');
     Route::get('/departments/delete-department-confirm/{id}', [DepartmentController::class, 'deleteDepartment'])->name('departments.delete-department-confirm');
+
+    // rh colaborators
+    Route::get('/rh-users', [RhUserController::class, 'index'])->name('colaborators.rh-users');
+    Route::get('/rh-users/new-colaborator', [RhUserController::class, 'newColaborator'])->name('colaborators.new-colaborator');
 });
 
 
