@@ -44,7 +44,7 @@ class DepartmentController extends Controller
     {
         Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
-        if(intval($id) == 1){
+        if (intval($id) == 1) {
             return redirect()->rout('departments');
         }
 
@@ -65,7 +65,7 @@ class DepartmentController extends Controller
         ]);
 
         // check if ID == 1
-        if($id == 1){
+        if ($id == 1) {
             return redirect()->view('departments');
         }
 
@@ -76,5 +76,35 @@ class DepartmentController extends Controller
         ]);
 
         return redirect()->route('departments');
+    }
+
+    public function deleteDepartment($id)
+    {
+        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
+
+        if (intval($id) == 1) {
+            return redirect()->route('departments');
+        }
+
+        $department = Department::findOrFail($id);
+
+        // page confirmation
+
+        return view('department.delete-department-confirm', compact('department'));
+    }
+
+    public function deleteDepartmentConfirm($id)
+    {
+        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
+
+        if(intval($id) == 1){
+            return redirect()->route('depatments');
+
+            $department = Department::findOrFail($id);
+
+            $department->delete();
+
+            return redirect()->route('departments');
+        }
     }
 }

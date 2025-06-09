@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Department;
 use App\Models\User;
 use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\Mail;
@@ -38,12 +39,16 @@ Route::middleware('auth')->group(function(){
 
     // departments routes
     Route::get('/departments', [DepartmentController::class, 'index'])->name('departments');
-    
+
     Route::get('/departments/new-department', [DepartmentController::class, 'newDepartment'])->name('departments.new-department');
     Route::post('/departments/create-department', [DepartmentController::class, 'createDepartment'])->name('departments.new-department');
 
     Route::get('/departments/edit-department/{id}', [DepartmentController::class, 'editDepartment'])->name('departments.edit-department');
     Route::get('/departments/update-department', [DepartmentController::class, 'updateDepartment'])->name('departments.update-department');
+
+    // delete
+    Route::get('/departments/delete-department/{id}', [DepartmentController::class, 'deleteDepartment'])->name('departments.delete-department');
+    Route::get('/departments/delete-department-confirm/{id}', [DepartmentController::class, 'deleteDepartment'])->name('departments.delete-department-confirm');
 });
 
 
