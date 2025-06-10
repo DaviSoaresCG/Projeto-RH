@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ConfirmAccountEmail;
 use App\Models\Department;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class RhUserController extends Controller
 {
@@ -52,9 +55,13 @@ class RhUserController extends Controller
             return redirect()->rotue('home');
         }
 
+        // create user confirmation token
+        $token = Str::random(60);
+
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->confirmation_token = $token;
         $user->role = 'rh';
         $user->department_id = $request->select_department;
         $user->permissions = '["rh"]';
@@ -69,6 +76,9 @@ class RhUserController extends Controller
             'phone' => $request->phone,
             'admission_date' => $request->admission_date
         ]);
+
+        // send email to user
+        Mail::to($user->email)->send(new ConfirmAccountEmail(route('confirm-account', $token)));
 
         return redirect()->route('colaborators.rh-users')->with('success', 'COLABORATOR CREATE BITCH!');
     }
@@ -101,4 +111,25 @@ class RhUserController extends Controller
 
         return redirect()->route('colaborators.rh-users')->with('success', 'colaborator UPDATE BITCH!!');
     }
+
+    public function deleteColaborator($id)
+    {
+        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+
+        $colaborator = User::findOrFail($id);
+        return view('colaborators.delete-rh-user', compact('colaborator'));
+    }
+
+    public function deleteColaboratorConfirm($id)
+    {
+        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+
+        $colaborator = User::findOrFail($id);
+        $colaborator->delete();
+
+        return redirect()->route('colaborators.rh-users')->with('success', 'CPF CANCELADO!!!');
+        
+    }
+
+
 }

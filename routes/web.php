@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ConfirmAccountController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RhUserController;
@@ -14,22 +15,30 @@ Route::get('/', function () {
 });
 
 
-Route::get('/email', function(){
-    Mail::raw('Mensagem de teste', function (Message $message){
+Route::get('/email', function () {
+    Mail::raw('Mensagem de teste', function (Message $message) {
         $message->to('davi@gmail.com')
-        ->subject('Bem vindo')
-        ->from('rh@gmail.com');
+            ->subject('Bem vindo')
+            ->from('rh@gmail.com');
     });
 
     echo "Email enviado";
 });
 
-Route::get('/admin', function(){
+Route::get('/admin', function () {
     $admin = User::with('detail', 'department')->find(1);
     return view('admin', compact('admin'));
 });
 
-Route::middleware('auth')->group(function(){
+
+Route::middleware('guest')->group(function () {
+    // email confirmation and password confirmation
+    Route::get('/confirm-account/{token}', [ConfirmAccountController::class, 'confirmAccount'])->name('confirm-account');
+    Route::get('/confirm-account', [ConfirmAccountController::class, 'confirmAccountSubmit'])->name('confirm-account-submit');
+});
+
+
+Route::middleware('auth')->group(function () {
     Route::redirect('/', 'home');
     Route::view('/home', 'home')->name('home');
 
@@ -55,16 +64,16 @@ Route::middleware('auth')->group(function(){
 
     // rh colaborators
     Route::get('/rh-users', [RhUserController::class, 'index'])->name('colaborators.rh-users');
-    Route::get('/rh-users/new-colaborator', [RhUserController::class, 'newColaborator'])->name('colaborators.new-colaborator');
+    Route::get('/rh-users/new-colaborator', [RhUserController::class, 'newColaborator'])->name('colaborators.rh.new-colaborator');
     // new colaborator
-    Route::post('/rh-users/create-colaborator', [RhUserController::class, 'createColaborator'])->name('colaborators.create-colaborator');
+    Route::post('/rh-users/create-colaborator', [RhUserController::class, 'createColaborator'])->name('colaborators.rh.create-colaborator');
+
     // edit colaborators
-    Route::get('/rh-users/edit-colaborator/{id}',  [RhUserController::class, 'editColaborator'])->name('colaborators.edit-colaborators');
+    Route::get('/rh-users/edit-colaborator/{id}',  [RhUserController::class, 'editColaborator'])->name('colaborators.rh.edit-colaborator');
     // update colaborator
-    Route::get('/rh-users/update-colaborator',  [RhUserController::class, 'updateColaborator'])->name('colaborators.update-colaborators');
+    Route::get('/rh-users/update-colaborator',  [RhUserController::class, 'updateColaborator'])->name('colaborators.rh.update-colaborator');
 
-
+    // delete colaborator
+    Route::get('/rh-users/delete/{id}', [RhUserController::class, 'deleteColaborator'])->name('colaborators.rh.delete-colaborator');
+    Route::get('/rh-users/delete-confirm/{id}', [RhUserController::class, 'deleteColaboratorConfirm'])->name('colaborators.rh.delete-confirm');
 });
-
-
-
