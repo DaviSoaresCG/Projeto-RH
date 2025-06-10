@@ -13,7 +13,8 @@ class RhUserController extends Controller
     {
         Auth::user()->can('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
 
-        $colaborators = User::where('role', 'rh')->get();
+        // $colaborators = User::where('role', 'rh')->get();
+        $colaborators = User::with('details')->where('role', 'rh')->get();
 
         return view('colaborators.rh-users', compact('colaborators'));
     }
@@ -47,6 +48,9 @@ class RhUserController extends Controller
         ]);
 
         // create new rh user
+        if($request->select_department != 2){
+            return redirect()->rotue('home');
+        }
 
         $user = new User();
         $user->name = $request->name;
@@ -67,5 +71,34 @@ class RhUserController extends Controller
         ]);
 
         return redirect()->route('colaborators.rh-users')->with('success', 'COLABORATOR CREATE BITCH!');
+    }
+
+    public function editColaborator($id)
+    {
+        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+
+        $colaborator = User::with('detail')->where('role', 'rh')->findOrFail($id);
+
+        return view('colaborators.edit-rh-user', compact('colaborator'));
+    }
+
+    public function updateColaborator(Request $request)
+    {
+        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+
+        // validate
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'salary' => 'required|decimal:2',
+            'admission_date' => 'required|date_format:Y-m-d'
+        ]);
+
+        $user = User::findOrFail($request->user_id);
+        $user->detail->update([
+            'salary' => $request->salary,
+            'admission_date' => $request->admission_date
+        ]);
+
+        return redirect()->route('colaborators.rh-users')->with('success', 'colaborator UPDATE BITCH!!');
     }
 }

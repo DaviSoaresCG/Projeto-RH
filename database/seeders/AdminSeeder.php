@@ -49,6 +49,11 @@ class AdminSeeder extends Seeder
         $user_details->updated_at = now();
         $user_details->save();
 
+        // rh department
+        $department = Department::create([
+            'name' => 'Recursos Humanos'
+        ]);
+
     }
     }
 

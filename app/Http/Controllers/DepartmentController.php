@@ -44,7 +44,7 @@ class DepartmentController extends Controller
     {
         Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
-        if (intval($id) == 1) {
+        if ($this->isDepartmentBlocked($id)) {
             return redirect()->rout('departments');
         }
 
@@ -65,7 +65,7 @@ class DepartmentController extends Controller
         ]);
 
         // check if ID == 1
-        if ($id == 1) {
+        if ($this->isDepartmentBlocked($id)) {
             return redirect()->view('departments');
         }
 
@@ -82,7 +82,7 @@ class DepartmentController extends Controller
     {
         Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
-        if (intval($id) == 1) {
+        if ($this->isDepartmentBLocked($id)) {
             return redirect()->route('departments');
         }
 
@@ -97,14 +97,20 @@ class DepartmentController extends Controller
     {
         Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
-        if(intval($id) == 1){
+        if($this->isDepartmentBlocked($id)){
             return redirect()->route('depatments');
+        }
 
             $department = Department::findOrFail($id);
 
             $department->delete();
 
             return redirect()->route('departments');
-        }
+        
+    }
+
+    private function isDepartmentBlocked($id)
+    {
+        return in_array(intval($id), [1,2]);
     }
 }
