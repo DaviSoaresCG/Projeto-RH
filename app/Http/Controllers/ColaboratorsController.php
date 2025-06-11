@@ -29,11 +29,15 @@ class ColaboratorsController extends Controller
             return redirect()->route('home');
         }
 
-        $colabortors = User::with('detail', 'department')
+        $colaborator = User::with('detail', 'department')
             ->where('id', $id)
             ->first();
 
-        return view('colaborators.show-details', compact('colaborators'));
+        if(!$colaborator){
+            abort(404, 'PÁGINA NAO ENCONTRADA');
+        }
+
+        return view('colaborators.show-details', compact('colaborator'));
     }
 
     public function deleteColaborator($id)

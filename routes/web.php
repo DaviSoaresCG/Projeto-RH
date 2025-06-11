@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ColaboratorsController;
 use App\Http\Controllers\ConfirmAccountController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RhGestaoController;
 use App\Http\Controllers\RhUserController;
 use App\Models\Department;
 use App\Models\User;
@@ -41,7 +43,14 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::redirect('/', 'home');
-    Route::view('/home', 'home')->name('home');
+    Route::view('/home', function () {
+        // check if user is admin
+        if (auth()->user()->role === 'admim') {
+            die('Vai para pagina de admin');
+        } elseif (auth()->user()->role === 'rh') {
+            return redirect()->route('rh-management.home');
+        }
+    });
 
     // user profile
     Route::get('/user/profile', [ProfileController::class, 'index'])->name('user.profile');
@@ -90,4 +99,11 @@ Route::middleware('auth')->group(function () {
     // admin restore
     Route::get('/rh-users/restore/{id}', [ColaboratorsController::class, 'restoreColaborator'])->name('colaborators.restore');
 
+    // rh management
+    Route::get('/rh-users/gestao/home', [RhGestaoController::class, 'home'])->name('rh.management.home');
+    Route::get('/rh-users/gestao/new-colaborator', [RhGestaoController::class, 'newColaborator'])->name('rh.management.new-colaborator');
+    Route::get('/rh-users/gestao/create-colaborator', [RhGestaoController::class, 'createColaborator'])->name('rh.management.create-colaborator');
+
+    // admin routes
+    Route::get('/admin/home', [AdminController::class, 'home'])->name('admin.home');
 });
