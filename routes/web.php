@@ -105,6 +105,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/rh-users/gestao/create-colaborator', [RhGestaoController::class, 'createColaborator'])->name('rh.management.create-colaborator');
     Route::get('/rh-users/gestao/edit-colaborator/{id}', [RhGestaoController::class, 'editColaborator'])->name('rh.management.edit-colaborator');
     Route::post('/rh-users/gestao/update-colaborator', [RhGestaoController::class, 'updateColaborator'])->name('rh.management.update-colaborator');
+    Route::post('/rh-users/gestao/details/{id}', [RhGestaoController::class, 'showDetails'])->name('rh.management.details');
 
     // admin routes
     Route::get('/admin/home', [AdminController::class, 'home'])->name('admin.home');
