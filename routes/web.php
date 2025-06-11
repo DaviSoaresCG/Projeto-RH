@@ -77,6 +77,9 @@ Route::middleware('auth')->group(function () {
     // delete colaborator
     Route::get('/rh-users/delete/{id}', [RhUserController::class, 'deleteColaborator'])->name('colaborators.rh.delete-colaborator');
     Route::get('/rh-users/delete-confirm/{id}', [RhUserController::class, 'deleteColaboratorConfirm'])->name('colaborators.rh.delete-confirm');
+    // restore colaborators
+    Route::get('/rh-users/restore/{id}', [RhUserController::class, 'restoreColaborator'])->name('colaborators.rh.restore');
+
 
     // admin colaborators list
     Route::get('/colaborators', [ColaboratorsController::class, 'index'])->name('colaborators.all-colaborators');
@@ -84,4 +87,7 @@ Route::middleware('auth')->group(function () {
     // delete colaborator
     Route::get('/colaborators/delete/{id}', [ColaboratorsController::class, 'deleteColaborator'])->name('colaborators.delete');
     Route::get('/colaborators/delete-confirm/{id}', [ColaboratorsController::class, 'deleteColaboratorConfirm'])->name('colaborators.delete-confirm');
+    // admin restore
+    Route::get('/rh-users/restore/{id}', [ColaboratorsController::class, 'restoreColaborator'])->name('colaborators.restore');
+
 });

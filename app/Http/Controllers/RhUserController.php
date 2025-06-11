@@ -17,7 +17,10 @@ class RhUserController extends Controller
         Auth::user()->can('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
 
         // $colaborators = User::where('role', 'rh')->get();
-        $colaborators = User::with('details')->where('role', 'rh')->get();
+        $colaborators = User::withTrashed()
+            ->with('details')
+            ->where('role', 'rh')
+            ->get();
 
         return view('colaborators.rh-users', compact('colaborators'));
     }
@@ -46,12 +49,12 @@ class RhUserController extends Controller
             'city' => 'required|string|max:100',
             'phone' => 'required|string|max:50',
             'salary' => 'required|decimal:2',
-            'admission_date' => 'required|date_format:Y-m-d',            
+            'admission_date' => 'required|date_format:Y-m-d',
             'select_department' => 'required|exists:departments,id'
         ]);
 
         // create new rh user
-        if($request->select_department != 2){
+        if ($request->select_department != 2) {
             return redirect()->rotue('home');
         }
 
@@ -128,8 +131,15 @@ class RhUserController extends Controller
         $colaborator->delete();
 
         return redirect()->route('colaborators.rh-users')->with('success', 'CPF CANCELADO!!!');
-        
     }
 
+    public function restoreColaborator($id)
+    {
+        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
 
+        $colaborator = User::withTrashed()->where('role', 'rh')->findOrFail($id);
+        $colaborator->restore();
+
+        return redirect()->route('colaborators.rh-users')->with('success', 'COLABORATODOR FOI RESTAURADO');
+    }
 }

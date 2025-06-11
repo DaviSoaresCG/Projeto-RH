@@ -12,7 +12,8 @@ class ColaboratorsController extends Controller
     {
         Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
-        $colabortors = User::with('detail', 'department')
+        $colabortors = User::withTrashed()
+            ->with('detail', 'department')
             ->where('role', '<>', 'admin')
             ->get();
 
@@ -45,7 +46,7 @@ class ColaboratorsController extends Controller
         }
 
         $colaborator = User::findOrFail($id);
-        
+
         return view('colaborators.delete-colaborator-confirm', compact('colaborator'));
     }
 
@@ -63,6 +64,16 @@ class ColaboratorsController extends Controller
         $colaborator->delete();
 
         return redirect()->route('colaboraotors.all-colaborator');
+    }
 
+    public function restoreColaborator($id)
+    {
+        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+
+        $colaborator = User::withTrashed()->findOrFail($id);
+
+        $colaborator->restore();
+
+        return redirect()->route('colaborators.all-colaborators');
     }
 }
