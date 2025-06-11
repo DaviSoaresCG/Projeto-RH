@@ -66,7 +66,7 @@ Route::middleware('auth')->group(function () {
 
     // edit departments
     Route::get('/departments/edit-department/{id}', [DepartmentController::class, 'editDepartment'])->name('departments.edit-department');
-    Route::get('/departments/update-department', [DepartmentController::class, 'updateDepartment'])->name('departments.update-department');
+    Route::post('/departments/update-department', [DepartmentController::class, 'updateDepartment'])->name('departments.update-department');
 
     // delete departments
     Route::get('/departments/delete-department/{id}', [DepartmentController::class, 'deleteDepartment'])->name('departments.delete-department');
@@ -81,7 +81,7 @@ Route::middleware('auth')->group(function () {
     // edit colaborators
     Route::get('/rh-users/edit-colaborator/{id}',  [RhUserController::class, 'editColaborator'])->name('colaborators.rh.edit-colaborator');
     // update colaborator
-    Route::get('/rh-users/update-colaborator',  [RhUserController::class, 'updateColaborator'])->name('colaborators.rh.update-colaborator');
+    Route::post('/rh-users/update-colaborator',  [RhUserController::class, 'updateColaborator'])->name('colaborators.rh.update-colaborator');
 
     // delete colaborator
     Route::get('/rh-users/delete/{id}', [RhUserController::class, 'deleteColaborator'])->name('colaborators.rh.delete-colaborator');
@@ -103,6 +103,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/rh-users/gestao/home', [RhGestaoController::class, 'home'])->name('rh.management.home');
     Route::get('/rh-users/gestao/new-colaborator', [RhGestaoController::class, 'newColaborator'])->name('rh.management.new-colaborator');
     Route::get('/rh-users/gestao/create-colaborator', [RhGestaoController::class, 'createColaborator'])->name('rh.management.create-colaborator');
+    Route::get('/rh-users/gestao/edit-colaborator/{id}', [RhGestaoController::class, 'editColaborator'])->name('rh.management.edit-colaborator');
+    Route::post('/rh-users/gestao/update-colaborator', [RhGestaoController::class, 'updateColaborator'])->name('rh.management.update-colaborator');
 
     // admin routes
     Route::get('/admin/home', [AdminController::class, 'home'])->name('admin.home');

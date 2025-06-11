@@ -89,4 +89,44 @@ class RhGestaoController extends Controller
 
         return redirect()->route('rh.management.home')->with('success', 'COLABORATOR CREATE BITCH!');
     }
+
+    public function editColaborator($id)
+    {
+        Auth::user()->can('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+
+        $colaborator = User::findOrFail($id);
+        $departments = Department::where('id', '>', 2);
+
+        return view('colaborators.edit-colaborator', compact('colaborator', 'departments'));
+    }
+
+    public function updateColaborator(Request $request)
+    {
+        Auth::user()->can('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+        
+        // validate
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'salary' => 'required|decimal:2',
+            'admission_date' => 'required|date_format:Y-m-d',
+            'select_department' => 'required|exists:departments,id'
+        ]);
+
+        // check if deparment is valide
+        
+        if($request->select_department <= 2){
+            return redirect()->route('home');
+        }
+
+        $user = User::with('detail')->findOrFail($request->user_id);
+
+        $user->detail->salary = $request->salary;
+        $user->detail->admission_date = $request->admission_date;
+        $user->department_id = $request->select_department;
+
+        $user->save();
+        $user->detail->save();
+
+        return redirect()->route('rh.management.home');
+    }
 }
