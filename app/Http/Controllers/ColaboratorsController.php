@@ -67,7 +67,7 @@ class ColaboratorsController extends Controller
 
         $colaborator->delete();
 
-        return redirect()->route('colaboraotors.all-colaborator');
+        return redirect()->route('colaborators.all-colaborators');
     }
 
     public function restoreColaborator($id)

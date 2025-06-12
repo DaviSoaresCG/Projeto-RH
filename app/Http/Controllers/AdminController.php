@@ -10,55 +10,51 @@ class AdminController extends Controller
 {
     public function home()
     {
-        Auth::user()->can('rh') ?: abort(403, 'SEM AUTORIZAÇÃO');
+        Auth::user()->can('admin') ?: abort(403, 'SEM AUTORIZAÇÃO');
 
-        // all information about the organization
         $data = [];
 
-        // get total numbers of colaborators(deleted_at is null)
-        $data['total_colaborators'] =  User::whereNull('deleted_at')->count();
+        // Total colaborators
+        $data['total_colaborators'] = User::whereNull('deleted_at')->count();
+        $data['total_colaborators_deleted'] = User::onlyTrashed()->count();
 
-        // total colaborators is deleted
-        $data['total_colaborators_deleted'] =  User::onlyTrashed()->count();
-
-        // total salary for all colaborators
-        $data['total_salary'] = User::withoutTrashed()->with('detail')->get()->sum(function ($colaborator) {
-            return $colaborator->detail->salary;
+        // Total salary
+        $totalSalary = User::withoutTrashed()->with('detail')->get()->sum(function ($colaborator) {
+            return $colaborator->detail->salary ?? 0;
         });
-        $data['total_salary'] = number_format($data['total_salary'], 2, ',', '.').'R$';
+        $data['total_salary'] = number_format($totalSalary, 2, ',', '.') . 'R$';
 
-        // total colaborators by departments
+        // Colaborators by department - formatado como array associativo simples
         $data['total_colaborators_per_department'] = User::withoutTrashed()
             ->with('department')
             ->get()
             ->groupBy('department_id')
             ->map(function ($department) {
                 return [
-                    'department' => $department->first()->department->name ?? '-',
+                    'department' => optional($department->first()->department)->name ?? '-',
                     'total' => $department->count()
                 ];
-            });
+            })
+            ->values() // Remove as chaves originais
+            ->all(); // Converte para array
 
-        // total salary by department
+        // Salary by department - formatado como array associativo simples
         $data['total_salary_by_department'] = User::withoutTrashed()
             ->with('department', 'detail')
             ->get()
             ->groupBy('department_id')
             ->map(function ($department) {
+                $total = $department->sum(function ($colaborator) {
+                    return $colaborator->detail->salary ?? 0;
+                });
+
                 return [
-                    'department' => $department->first()->department->name ?? '-',
-                    'total' => $department->sum(function ($colaborator) {
-                        return $colaborator->detail->salary;
-                    })
+                    'department' => optional($department->first()->department)->name ?? '-',
+                    'total' => number_format($total, 2, ',', '.') . 'R$'
                 ];
-            });
-        // format salary
-        $data['total_salary_by_department'] = $data['total_salary_by_department']->map(function($department){
-            return [
-                'department' => $department['department'],
-                'total' => number_format($department['total'], 2, ',', '.').'R$'
-            ];
-        });
+            })
+            ->values() // Remove as chaves originais
+            ->all(); // Converte para array
 
         return view('home', compact('data'));
     }

@@ -29,10 +29,10 @@ class RhGestaoController extends Controller
     {
         Auth::user()->can('rh') ?: abort(403, 'SEM AUTORIZAÇÃO');
 
-        $departments = Department::where('id', '>', 2);
+        $departments = Department::where('id', '>', 2)->get();
 
         // if there are no departments, die
-        if ($departments->count() === 0) {
+        if ($departments->count() == 0) {
             abort(403, 'There are no departments, Please contact System adminstrator');
         }
         return view('colaborators.add-colaborator', compact('departments'));
