@@ -10,6 +10,7 @@ use App\Http\Controllers\RhUserController;
 use App\Models\Department;
 use App\Models\User;
 use Illuminate\Mail\Message;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
@@ -45,10 +46,12 @@ Route::middleware('auth')->group(function () {
     Route::redirect('/', 'home');
     Route::view('/home', function () {
         // check if user is admin
-        if (auth()->user()->role === 'admim') {
+        if (Auth::user()->role === 'admim') {
             die('Vai para pagina de admin');
         } elseif (auth()->user()->role === 'rh') {
             return redirect()->route('rh-management.home');
+        } else {
+            return redirect()->route('colaborator');
         }
     });
 
@@ -56,13 +59,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/profile', [ProfileController::class, 'index'])->name('user.profile');
     Route::post('/user/profile/update-password', [ProfileController::class, 'updatePassword'])->name('user.profile.update-password');
     Route::post('/user/profile/update-user-data', [ProfileController::class, 'updateUserData'])->name('user.profile.update-user-data');
+    Route::post('/user/profile/update-user-address', [ProfileController::class, 'updateUserAddress'])->name('user.profile.update-user-address');
 
     // departments routes
     Route::get('/departments', [DepartmentController::class, 'index'])->name('departments');
 
     // create departments
     Route::get('/departments/new-department', [DepartmentController::class, 'newDepartment'])->name('departments.new-department');
-    Route::post('/departments/create-department', [DepartmentController::class, 'createDepartment'])->name('departments.new-department');
+    Route::post('/departments/create-department', [DepartmentController::class, 'createDepartment'])->name('departments.create-department');
 
     // edit departments
     Route::get('/departments/edit-department/{id}', [DepartmentController::class, 'editDepartment'])->name('departments.edit-department');
@@ -106,7 +110,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/rh-users/gestao/edit-colaborator/{id}', [RhGestaoController::class, 'editColaborator'])->name('rh.management.edit-colaborator');
     Route::post('/rh-users/gestao/update-colaborator', [RhGestaoController::class, 'updateColaborator'])->name('rh.management.update-colaborator');
     Route::post('/rh-users/gestao/details/{id}', [RhGestaoController::class, 'showDetails'])->name('rh.management.details');
+    // soft delete gestao
+    Route::get('/rh-users/gestao/delete/{id}', [RhGestaoController::class, 'deleteColaborator'])->name('rh.management.delete');
+    Route::post('/rh-users/gestao/delete-confirm/{id}', [RhGestaoController::class, 'deleteColaboratorConfirm'])->name('rh.management.delete-confirm');
+    Route::post('/rh-users/gestao/restore/{id}', [RhGestaoController::class, 'restoreColaborator'])->name('rh.management.restore');
+
 
     // admin routes
     Route::get('/admin/home', [AdminController::class, 'home'])->name('admin.home');
+
+    // colaborators routes
+    Route::get('/colaborator', [ColaboratorsController::class, 'home'])->name('colaborator');
 });

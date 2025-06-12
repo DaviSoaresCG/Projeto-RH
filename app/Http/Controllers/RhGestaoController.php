@@ -16,9 +16,9 @@ class RhGestaoController extends Controller
     {
         Auth::user()->can('rh') ?: abort(403, 'SEM AUTORIZAÇÃO');
 
-        $colaborators = User::with('detal', 'department')
+        $colaborators = User::with('detail', 'department')
             ->where('role', 'colaborator')
-            ->withTrashade()
+            ->withTrashed()
             ->get();
 
 
@@ -58,7 +58,7 @@ class RhGestaoController extends Controller
 
         // create new rh user
         if ($request->select_department <= 2) {
-            return redirect()->rotue('home');
+            return redirect()->route('home');
         }
 
         // create user confirmation token
@@ -137,6 +137,37 @@ class RhGestaoController extends Controller
         $colaborator = User::with('detail', 'department')->findOrFail($id);
 
         return view('colaborators.show-details', compact('colaborator'));
+    }
+
+    public function deleteColaborator($id)
+    {
+        Auth::user()->can('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+
+        $colaborator = User::findOrFail($id);
+
+        return view('colaborators.delete-colaborator', compact('colaborator'));
+    }
+
+    public function deleteColaboratorConfirm($id)
+    {
+        Auth::user()->can('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+
+        $colaborator = User::findOrFail($id);
+
+        $colaborator->delete();
+
+        return redirect()->route('rh.management');
+    }
+
+    public function restoreColaborator($id)
+    {
+        Auth::user()->can('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+        
+        $colaborator = User::withTrashed()->findOrFail($id);
+
+        $colaborator->restore();
+
+        return redirect()->route('home');
     }
 }
 

@@ -18,7 +18,7 @@ class RhUserController extends Controller
 
         // $colaborators = User::where('role', 'rh')->get();
         $colaborators = User::withTrashed()
-            ->with('details')
+            ->with('detail')
             ->where('role', 'rh')
             ->get();
 
@@ -49,13 +49,12 @@ class RhUserController extends Controller
             'city' => 'required|string|max:100',
             'phone' => 'required|string|max:50',
             'salary' => 'required|decimal:2',
-            'admission_date' => 'required|date_format:Y-m-d',
-            'select_department' => 'required|exists:departments,id'
+            'admission_date' => 'required|date_format:Y-m-d'
         ]);
 
         // create new rh user
         if ($request->select_department != 2) {
-            return redirect()->rotue('home');
+            return redirect()->route('home');
         }
 
         // create user confirmation token

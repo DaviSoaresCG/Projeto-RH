@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,7 +15,7 @@ class DepartmentController extends Controller
 
         $departments = Department::all();
 
-        return view('department.derpatments', compact('departments'));
+        return view('department.departments', compact('departments'));
     }
 
     public function newDepartment()
@@ -45,7 +46,7 @@ class DepartmentController extends Controller
         Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
         if ($this->isDepartmentBlocked($id)) {
-            return redirect()->rout('departments');
+            return redirect()->route('departments');
         }
 
         $department = Department::findOrFail($id);
@@ -66,7 +67,7 @@ class DepartmentController extends Controller
 
         // check if ID == 1
         if ($this->isDepartmentBlocked($id)) {
-            return redirect()->view('departments');
+            return redirect()->route('departments');
         }
 
         $department = Department::findOrFail($id);
@@ -82,7 +83,7 @@ class DepartmentController extends Controller
     {
         Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
-        if ($this->isDepartmentBLocked($id)) {
+        if ($this->isDepartmentBlocked($id)) {
             return redirect()->route('departments');
         }
 
@@ -98,12 +99,15 @@ class DepartmentController extends Controller
         Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
         if($this->isDepartmentBlocked($id)){
-            return redirect()->route('depatments');
+            return redirect()->route('departments');
         }
 
             $department = Department::findOrFail($id);
 
             $department->delete();
+
+            // update all colaborators with department deleted
+            User::where('department_id', $id)->update(['department_id' => null]);
 
             return redirect()->route('departments');
         

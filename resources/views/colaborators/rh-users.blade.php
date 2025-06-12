@@ -26,7 +26,7 @@
                     <th>Active</th>
                     <th>Department</th>
                     <th>Role</th>
-                    <th>Admisssion date</th>
+                    <th>Admission date</th>
                     <th>Salary</th>
                     <th></th>
                 </thead>
