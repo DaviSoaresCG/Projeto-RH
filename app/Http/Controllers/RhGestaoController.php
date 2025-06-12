@@ -95,7 +95,7 @@ class RhGestaoController extends Controller
         Auth::user()->can('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
 
         $colaborator = User::findOrFail($id);
-        $departments = Department::where('id', '>', 2);
+        $departments = Department::where('id', '>', 2)->get();
 
         return view('colaborators.edit-colaborator', compact('colaborator', 'departments'));
     }
