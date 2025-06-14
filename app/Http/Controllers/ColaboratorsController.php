@@ -57,7 +57,7 @@ class ColaboratorsController extends Controller
 
     public function deleteColaboratorConfirm($id)
     {
-        Gate::any('admin', 'rh') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
+        Gate::any(['admin', 'rh']) ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
         // I cant delete my ID
         if (Auth::user()->id == $id) {
