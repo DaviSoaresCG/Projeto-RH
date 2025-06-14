@@ -13,6 +13,8 @@ class User extends Authenticable
     use Notifiable;
     use SoftDeletes;
     
+    protected $fillable = ['password', 'name', 'email'];
+
     // relacionamento de 1 para 1 com a tabela User_detail
     public function detail()
     {

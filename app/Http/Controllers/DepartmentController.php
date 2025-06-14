@@ -6,12 +6,13 @@ use App\Models\Department;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class DepartmentController extends Controller
 {
     public function index()
     {
-        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
+        Gate::allows('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
         $departments = Department::all();
 
@@ -20,13 +21,13 @@ class DepartmentController extends Controller
 
     public function newDepartment()
     {
-        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
+        Gate::allows('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
         return view('department.add-department');
     }
 
     public function createDepartment(Request $request)
     {
-        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
+        Gate::allows('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
         //  validate
         $request->validate([
@@ -43,7 +44,7 @@ class DepartmentController extends Controller
 
     public function editDepartment($id)
     {
-        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
+        Gate::allows('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
         if ($this->isDepartmentBlocked($id)) {
             return redirect()->route('departments');
@@ -55,7 +56,7 @@ class DepartmentController extends Controller
 
     public function updateDepartment(Request $request)
     {
-        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
+        Gate::allows('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
         $id = $request->id;
 
@@ -81,7 +82,7 @@ class DepartmentController extends Controller
 
     public function deleteDepartment($id)
     {
-        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
+        Gate::allows('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
         if ($this->isDepartmentBlocked($id)) {
             return redirect()->route('departments');
@@ -96,7 +97,7 @@ class DepartmentController extends Controller
 
     public function deleteDepartmentConfirm($id)
     {
-        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
+        Gate::allows('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
         if($this->isDepartmentBlocked($id)){
             return redirect()->route('departments');

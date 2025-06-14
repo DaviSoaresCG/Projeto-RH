@@ -25,14 +25,18 @@ class ProfileController extends Controller
             ]
         );
 
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
         // check if current password is correct
         if (!password_verify($request->current_password, $user->password)) {
             return redirect()->back()->with('error', 'Current Password is INCORRECT!!! BITCH');
         }
 
-        $user->password = bcrypt($request->new_password);
-        $user->save();
+        $user->update([
+            'password' => bcrypt($request->new_password)
+        ]);
+        // $user->password = bcrypt($request->new_password);
+        // $user->save;
 
         return redirect()->back()->with('success', 'Password updated!');
     }
@@ -42,10 +46,11 @@ class ProfileController extends Controller
         // validate
         $request->validate([
             'name' => 'required|min:3|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . auth()->id()
+            'email' => 'required|email|max:255|unique:users,email,' . Auth::id()
         ]);
 
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
         $user->name = $request->name;
         $user->email = $request->email;
         $user->save();

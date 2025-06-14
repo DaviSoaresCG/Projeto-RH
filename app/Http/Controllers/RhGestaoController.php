@@ -9,12 +9,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Mail\ConfirmAccountEmail;
+use Illuminate\Support\Facades\Gate;
 
 class RhGestaoController extends Controller
 {
     public function home()
     {
-        Auth::user()->can('rh') ?: abort(403, 'SEM AUTORIZAÇÃO');
+        Gate::allows('rh') ?: abort(403, 'SEM AUTORIZAÇÃO');
 
         $colaborators = User::with('detail', 'department')
             ->where('role', 'colaborator')
@@ -27,7 +28,7 @@ class RhGestaoController extends Controller
 
     public function newColaborator()
     {
-        Auth::user()->can('rh') ?: abort(403, 'SEM AUTORIZAÇÃO');
+        Gate::allows('rh') ?: abort(403, 'SEM AUTORIZAÇÃO');
 
         $departments = Department::where('id', '>', 2)->get();
 
@@ -40,7 +41,7 @@ class RhGestaoController extends Controller
 
     public function createColaborator(Request $request)
     {
-        Auth::user()->can('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+        Gate::allows('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
 
         // validate
         $request->validate([
@@ -92,7 +93,7 @@ class RhGestaoController extends Controller
 
     public function editColaborator($id)
     {
-        Auth::user()->can('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+        Gate::allows('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
 
         $colaborator = User::findOrFail($id);
         $departments = Department::where('id', '>', 2)->get();
@@ -102,7 +103,7 @@ class RhGestaoController extends Controller
 
     public function updateColaborator(Request $request)
     {
-        Auth::user()->can('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+        Gate::allows('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
         
         // validate
         $request->validate([
@@ -132,7 +133,7 @@ class RhGestaoController extends Controller
 
     public function showDetails($id)
     {
-        Auth::user()->can('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+        Gate::allows('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
         
         $colaborator = User::with('detail', 'department')->findOrFail($id);
 
@@ -141,7 +142,7 @@ class RhGestaoController extends Controller
 
     public function deleteColaborator($id)
     {
-        Auth::user()->can('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+        Gate::allows('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
 
         $colaborator = User::findOrFail($id);
 
@@ -150,7 +151,7 @@ class RhGestaoController extends Controller
 
     public function deleteColaboratorConfirm($id)
     {
-        Auth::user()->can('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+        Gate::allows('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
 
         $colaborator = User::findOrFail($id);
 
@@ -161,7 +162,7 @@ class RhGestaoController extends Controller
 
     public function restoreColaborator($id)
     {
-        Auth::user()->can('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+        Gate::allows('rh') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
         
         $colaborator = User::withTrashed()->findOrFail($id);
 

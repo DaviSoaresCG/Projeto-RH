@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,17 +23,17 @@ class AppServiceProvider extends ServiceProvider
     {
         // gate para verificar se o usuario é admin
         Gate::define('admin', function () {
-            return auth()->user()->role === 'admin';
+            return Auth::user()->role === 'admin';
         });
 
         // gate para verificar se o usuario é RH
         Gate::define('rh', function () {
-            return auth()->user()->role === 'rh';
+            return Auth::user()->role === 'rh';
         });
 
         // gate para verificar se o usuario é um colaborador normal
         Gate::define('colaborator', function(){
-            return auth()->user()->role === 'colaborator';
+            return Auth::user()->role === 'colaborator';
         });
     }
 }

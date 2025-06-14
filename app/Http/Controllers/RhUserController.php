@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -14,7 +15,7 @@ class RhUserController extends Controller
 {
     public function index()
     {
-        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+        Gate::allows('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
 
         // $colaborators = User::where('role', 'rh')->get();
         $colaborators = User::withTrashed()
@@ -27,7 +28,7 @@ class RhUserController extends Controller
 
     public function newColaborator()
     {
-        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+        Gate::allows('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
 
         // all departments
         $departments = Department::all();
@@ -37,7 +38,7 @@ class RhUserController extends Controller
 
     public function createColaborator(Request $request)
     {
-        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+        Gate::allows('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
 
         // validate
         $request->validate([
@@ -87,7 +88,7 @@ class RhUserController extends Controller
 
     public function editColaborator($id)
     {
-        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+        Gate::allows('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
 
         $colaborator = User::with('detail')->where('role', 'rh')->findOrFail($id);
 
@@ -96,7 +97,7 @@ class RhUserController extends Controller
 
     public function updateColaborator(Request $request)
     {
-        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+        Gate::allows('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
 
         // validate
         $request->validate([
@@ -116,7 +117,7 @@ class RhUserController extends Controller
 
     public function deleteColaborator($id)
     {
-        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+        Gate::allows('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
 
         $colaborator = User::findOrFail($id);
         return view('colaborators.delete-rh-user', compact('colaborator'));
@@ -124,7 +125,7 @@ class RhUserController extends Controller
 
     public function deleteColaboratorConfirm($id)
     {
-        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+        Gate::allows('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
 
         $colaborator = User::findOrFail($id);
         $colaborator->delete();
@@ -134,7 +135,7 @@ class RhUserController extends Controller
 
     public function restoreColaborator($id)
     {
-        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+        Gate::allows('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
 
         $colaborator = User::withTrashed()->where('role', 'rh')->findOrFail($id);
         $colaborator->restore();

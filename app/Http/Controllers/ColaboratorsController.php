@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class ColaboratorsController extends Controller
 {
     public function index()
     {
-        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
+        Gate::allows('admin') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
         $colaborators = User::withTrashed()
             ->with('detail', 'department')
@@ -22,7 +23,7 @@ class ColaboratorsController extends Controller
 
     public function showDetails($id)
     {
-        Auth::user()->can('admin', 'rh') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
+        Gate::any(['admin', 'rh']) ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
         // I cant show my ID
         if (Auth::user()->id == $id) {
@@ -42,7 +43,7 @@ class ColaboratorsController extends Controller
 
     public function deleteColaborator($id)
     {
-        Auth::user()->can('admin', 'rh') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
+        Gate::any(['admin', 'rh']) ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
         // I cant delete my ID
         if (Auth::user()->id == $id) {
@@ -56,7 +57,7 @@ class ColaboratorsController extends Controller
 
     public function deleteColaboratorConfirm($id)
     {
-        Auth::user()->can('admin', 'rh') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
+        Gate::any('admin', 'rh') ?: abort(403, 'VOCE NAO ESTA AUTORIZADO BITCH');
 
         // I cant delete my ID
         if (Auth::user()->id == $id) {
@@ -72,7 +73,7 @@ class ColaboratorsController extends Controller
 
     public function restoreColaborator($id)
     {
-        Auth::user()->can('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+        Gate::allows('admin') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
 
         $colaborator = User::withTrashed()->findOrFail($id);
 
@@ -82,7 +83,7 @@ class ColaboratorsController extends Controller
     }
 
     public function home(){
-        Auth::user()->can('colaborator') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
+        Gate::allows('colaborator') ?: abort(403, 'VOCE NAO TEM AUTORIZAÇÃO');
 
         // get colaborator data
         $colaborator = User::with('detail', 'department')
